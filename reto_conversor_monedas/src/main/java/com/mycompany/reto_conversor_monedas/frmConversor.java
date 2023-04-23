@@ -15,6 +15,10 @@ public class frmConversor extends javax.swing.JFrame {
     /**
      * Creates new form frmConversor
      */
+    
+    private String[] units = {};
+    
+    
     public frmConversor() {
         initComponents();
         setLocationRelativeTo(null);
