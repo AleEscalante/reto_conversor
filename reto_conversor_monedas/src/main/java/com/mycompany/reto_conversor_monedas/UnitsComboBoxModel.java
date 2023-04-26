@@ -4,6 +4,8 @@
  */
 package com.mycompany.reto_conversor_monedas;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import javax.swing.AbstractListModel;
 import javax.swing.ComboBoxModel;
 
@@ -12,17 +14,17 @@ import javax.swing.ComboBoxModel;
  * @author Alejandro
  */
 public class UnitsComboBoxModel extends AbstractListModel<String> implements ComboBoxModel<String>{
-    private String[] units = {};
+    private ArrayList<String> units = new ArrayList<>();
     private String selectedItem;
 
     @Override
     public int getSize() {
-        return units.length;
+        return units.size();
     }
 
     @Override
     public String getElementAt(int index) {
-        return units[index];
+        return units.get(index);
     }
 
     @Override
@@ -35,11 +37,11 @@ public class UnitsComboBoxModel extends AbstractListModel<String> implements Com
         return selectedItem;
     }
 
-    public String[] getUnits() {
+    public ArrayList<String> getUnits() {
         return units;
     }
 
-    public void setUnits(String[] units) {
+    public void setUnits(ArrayList<String> units) {
         this.units = units;
     }
       

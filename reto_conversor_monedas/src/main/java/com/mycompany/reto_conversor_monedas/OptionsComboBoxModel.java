@@ -4,6 +4,8 @@
  */
 package com.mycompany.reto_conversor_monedas;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import javax.swing.AbstractListModel;
 import javax.swing.ComboBoxModel;
 
@@ -13,17 +15,17 @@ import javax.swing.ComboBoxModel;
  */
 public class OptionsComboBoxModel extends AbstractListModel<String> implements ComboBoxModel<String> {
 
-    private String[] options = {"Moneda", "Longitud", "Temperatura", "Peso"};
+    private ArrayList<String> options = new ArrayList<>(Arrays.asList("Moneda", "Longitud", "Temperatura", "Peso"));
     private String selectedItem;
 
     @Override
     public int getSize() {
-        return options.length;
+        return options.size();
     }
 
     @Override
     public String getElementAt(int index) {
-        return options[index];
+        return options.get(index);
     }
 
     @Override
