@@ -15,11 +15,13 @@ import java.util.Arrays;
 public class frmConverter extends javax.swing.JFrame {
 
     private ArrayList<String> units = new ArrayList<>(Arrays.asList(""));
+    private ArrayList<String> unitsConvertTo = new ArrayList<>(Arrays.asList(""));
 
     /**
      * Creates new form frmConversor
      */
     private UnitsComboBoxModel unitsModel = new UnitsComboBoxModel();
+    private UnitsComboBoxModel unitsConvertToModel = new UnitsComboBoxModel();
 
     public frmConverter() {
         initComponents();
@@ -84,6 +86,11 @@ public class frmConverter extends javax.swing.JFrame {
         lblOptions.setText("Opciones de conversor");
 
         cmbUnits.setModel(new UnitsComboBoxModel());
+        cmbUnits.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cmbUnitsItemStateChanged(evt);
+            }
+        });
         cmbUnits.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 cmbUnitsFocusGained(evt);
@@ -203,12 +210,16 @@ public class frmConverter extends javax.swing.JFrame {
     }//GEN-LAST:event_cmbUnitsActionPerformed
 
     private void cmbOptionsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbOptionsActionPerformed
-        comboBoxRefresh();
+        comboBoxUnitsRefresh();
     }//GEN-LAST:event_cmbOptionsActionPerformed
 
     private void cmbUnitsFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_cmbUnitsFocusGained
         // TODO add your handling code here:
     }//GEN-LAST:event_cmbUnitsFocusGained
+
+    private void cmbUnitsItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cmbUnitsItemStateChanged
+        comboBoxConvertToRefresh();
+    }//GEN-LAST:event_cmbUnitsItemStateChanged
 
     /**
      * @param args the command line arguments
@@ -246,8 +257,7 @@ public class frmConverter extends javax.swing.JFrame {
         });
     }
 
-    private void comboBoxRefresh() {
-
+    private void comboBoxUnitsRefresh() {
         units.clear();
         String option = cmbOptions.getSelectedItem().toString();
 
@@ -281,6 +291,18 @@ public class frmConverter extends javax.swing.JFrame {
         cmbUnits.setSelectedIndex(0);
         cmbUnits.repaint();
 
+    }
+
+    private void comboBoxConvertToRefresh() {
+        unitsConvertTo.clear();
+        int optionUnits = cmbUnits.getSelectedIndex();
+        unitsConvertTo.addAll(units);
+        unitsConvertTo.remove(optionUnits);
+
+        unitsConvertToModel.setUnits(unitsConvertTo);
+        cmbConvertTo.setModel(unitsConvertToModel);
+        cmbConvertTo.setSelectedIndex(0);
+        cmbConvertTo.repaint();
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
