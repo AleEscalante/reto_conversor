@@ -5,8 +5,15 @@
 package com.mycompany.reto_conversor_monedas;
 
 import java.awt.Color;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -14,8 +21,59 @@ import java.util.Arrays;
  */
 public class frmConverter extends javax.swing.JFrame {
 
+    private Double conversion;
     private ArrayList<String> units = new ArrayList<>(Arrays.asList(""));
     private ArrayList<String> unitsConvertTo = new ArrayList<>(Arrays.asList(""));
+
+    private final Map<String, Double> conversionFactorsMap = new HashMap<String, Double>() {
+        {
+            //Monedas conversion
+            put("Dólares a Euros", 0.85);
+            put("Dólares a Libras Esterlinas", 0.72);
+            put("Dólares a Yen Japonés", 109.50);
+            put("Dólares a Won sul-coreano", 1167.57);
+
+            put("Euros a Dólares", 1.18);
+            put("Euros a Libras Esterlinas", 0.85);
+            put("Euros a Yen Japonés", 130.07);
+            put("Euros a Won sul-coreano", 1387.27);
+
+            put("Libras Esterlinas a Dólares", 1.39);
+            put("Libras Esterlinas a Euros", 1.17);
+            put("Libras Esterlinas a Yen Japonés", 152.53);
+            put("Libras Esterlinas a Won sul-coreano", 1624.03);
+
+            put("Yen Japonés a Dólares", 0.0091);
+            put("Yen Japonés a Euros", 0.0077);
+            put("Yen Japonés a Libras Esterlinas", 0.0066);
+            put("Yen Japonés a Won sul-coreano", 10.61);
+
+            put("Won sul-coreano a Dólares", 0.00086);
+            put("Won sul-coreano a Euros", 0.00072);
+            put("Won sul-coreano a Libras Esterlinas", 0.00062);
+            put("Won sul-coreano a Yen Japonés", 0.094);
+
+            //Longitud conversion
+            put("Metros a Pies", 3.28084);
+            put("Metros a Pulgadas", 39.37008);
+
+            put("Pies a Metros", 0.3048);
+            put("Pies a Pulgadas", 12.0);
+
+            put("Pulgadas a Metros", 0.0254);
+            put("Pulgadas a Pies", 0.0833);
+
+            //Peso conversion
+            put("Kilogramos a Libras", 2.20462);
+            put("Kilogramos a Onzas", 35.27396);
+
+            put("Libras a Kilogramos", 0.453592);
+            put("Libras a Onzas", 16.0);
+
+            put("Onzas a Kilogramos", 0.0283495);
+            put("Onzas a Libras", 0.0625);
+        }
+    };
 
     /**
      * Creates new form frmConversor
@@ -25,8 +83,10 @@ public class frmConverter extends javax.swing.JFrame {
 
     public frmConverter() {
         initComponents();
+        this.setResizable(false);
         cmbOptions.setSelectedIndex(0);
         lblConversion.setText("");
+        btnClipboard.setVisible(false);
         setLocationRelativeTo(null);
     }
 
@@ -49,6 +109,7 @@ public class frmConverter extends javax.swing.JFrame {
         cmbConvertTo = new javax.swing.JComboBox<>();
         lblConversion = new javax.swing.JLabel();
         btnConvert = new javax.swing.JButton();
+        btnClipboard = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -68,6 +129,11 @@ public class frmConverter extends javax.swing.JFrame {
         txtValueToConvert.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtValueToConvertActionPerformed(evt);
+            }
+        });
+        txtValueToConvert.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtValueToConvertKeyTyped(evt);
             }
         });
 
@@ -108,57 +174,74 @@ public class frmConverter extends javax.swing.JFrame {
 
         cmbConvertTo.setModel(new UnitsComboBoxModel());
 
-        lblConversion.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        lblConversion.setText("Conversion acá");
+        lblConversion.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+        lblConversion.setText("Conversion");
 
         btnConvert.setText("Convertir");
+        btnConvert.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnConvertActionPerformed(evt);
+            }
+        });
+
+        btnClipboard.setText("Copiar");
+        btnClipboard.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnClipboardActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(42, 42, 42)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblOptions, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(cmbOptions, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(34, 34, 34)
-                        .addComponent(txtValueToConvert, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(36, 36, 36)
-                        .addComponent(lblUnits, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(282, 282, 282)
+                        .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(28, 28, 28)
-                        .addComponent(cmbUnits, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(39, 39, 39)
-                        .addComponent(lblConvertTo, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(31, 31, 31)
-                        .addComponent(cmbConvertTo, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(42, 42, 42)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(btnClipboard)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(lblOptions, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(cmbOptions, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(34, 34, 34)
+                                        .addComponent(txtValueToConvert, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGap(36, 36, 36)
+                                        .addComponent(lblUnits, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGap(28, 28, 28)
+                                        .addComponent(cmbUnits, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGap(39, 39, 39)
+                                        .addComponent(lblConvertTo, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGap(31, 31, 31)
+                                        .addComponent(cmbConvertTo, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)))))))
                 .addContainerGap(32, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(272, 272, 272))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(btnConvert)
                         .addGap(299, 299, 299))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(lblConversion, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(267, 267, 267))))
+                        .addComponent(lblConversion, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(166, 166, 166))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(18, 18, 18)
+                .addGap(17, 17, 17)
                 .addComponent(lblTitle)
-                .addGap(30, 30, 30)
+                .addGap(31, 31, 31)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -176,7 +259,9 @@ public class frmConverter extends javax.swing.JFrame {
                 .addGap(27, 27, 27)
                 .addComponent(btnConvert)
                 .addGap(18, 18, 18)
-                .addComponent(lblConversion)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblConversion)
+                    .addComponent(btnClipboard))
                 .addContainerGap(20, Short.MAX_VALUE))
         );
 
@@ -221,6 +306,29 @@ public class frmConverter extends javax.swing.JFrame {
         comboBoxConvertToRefresh();
     }//GEN-LAST:event_cmbUnitsItemStateChanged
 
+    private void txtValueToConvertKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtValueToConvertKeyTyped
+        char c = evt.getKeyChar();
+        String input = txtValueToConvert.getText().trim();
+        int dotIndex = input.indexOf('.');
+        boolean isTemperatureSelected = cmbOptions.getSelectedItem().equals("Temperatura");
+
+        if (!Character.isDigit(c) && c != '.' && c != KeyEvent.VK_BACK_SPACE && (c != '-' || input.indexOf('-') != -1
+                || !isTemperatureSelected || txtValueToConvert.getCaretPosition() > 0)) {
+            evt.consume();
+        } else if (c == '.' && (dotIndex != -1 || input.isEmpty())) {
+            evt.consume();
+        }
+
+    }//GEN-LAST:event_txtValueToConvertKeyTyped
+
+    private void btnConvertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConvertActionPerformed
+        convert();
+    }//GEN-LAST:event_btnConvertActionPerformed
+
+    private void btnClipboardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClipboardActionPerformed
+        copy();
+    }//GEN-LAST:event_btnClipboardActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -263,6 +371,7 @@ public class frmConverter extends javax.swing.JFrame {
 
         switch (option) {
             case "Moneda":
+                units.add("Dólares");
                 units.add("Euros");
                 units.add("Libras Esterlinas");
                 units.add("Yen Japonés");
@@ -305,7 +414,63 @@ public class frmConverter extends javax.swing.JFrame {
         cmbConvertTo.repaint();
     }
 
+    private double calculateConversion(String key, double value) {
+        switch (key) {
+            case "Celcius a Farenheit" -> {
+                return ((value * (9.0 / 5.0)) + 32);
+            }
+            case "Celcius a Kelvin" -> {
+                return (value + 273.15);
+            }
+            case "Farenheit a Celcius" -> {
+                return ((value - 32) * (5.0 / 9.0));
+            }
+            case "Farenheit a Kelvin" -> {
+                return ((value + 459.67) * (5.0 / 9.0));
+            }
+            case "Kelvin a Celcius" -> {
+                return (value - 273.15);
+            }
+            case "Kelvin a Farenheit" -> {
+                return ((value * (9.0 / 5.0)) - 459.67);
+            }
+            default ->
+                throw new AssertionError();
+        }
+    }
+
+    private void convert() {
+        String value = txtValueToConvert.getText();
+        String unit = cmbUnits.getSelectedItem().toString();
+        String convertTo = cmbConvertTo.getSelectedItem().toString();
+        String key = unit + " a " + convertTo;
+        String option = cmbOptions.getSelectedItem().toString();
+
+        if (value.endsWith(".")) {
+            value += "0";
+            txtValueToConvert.setText(value);
+        }
+
+        if (option == "Temperatura") {
+            conversion = calculateConversion(key, Double.parseDouble(value));
+        } else {
+            conversion = Math.round((Double.valueOf(value) * conversionFactorsMap.get(key)) * 100.0) / 100.0;
+        }
+        lblConversion.setText(conversion + " " + convertTo);
+        btnClipboard.setVisible(true);
+    }
+
+    private void copy() {
+        StringSelection selection = new StringSelection(conversion.toString());
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clipboard.setContents(selection, null);
+        JOptionPane.showMessageDialog(null, "Texto copiado al portapapeles");
+        lblConversion.setText("");
+        btnClipboard.setVisible(false);
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnClipboard;
     private javax.swing.JButton btnConvert;
     private javax.swing.JComboBox<String> cmbConvertTo;
     private javax.swing.JComboBox<String> cmbOptions;
