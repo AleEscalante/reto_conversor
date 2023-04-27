@@ -51,9 +51,10 @@ Este proyecto utiliza las siguientes clases y paquetes de Java:
 
 Estas clases y paquetes son parte de la biblioteca estándar de Java y no requieren dependencias externas adicionales.
 
-##Screenshot del programa
+## Screenshot del programa
 
 ![programa](/screenshots/programa.png)
+![menú del programa](/screenshots/menu.png)
 
 ## Contribuciones
 
