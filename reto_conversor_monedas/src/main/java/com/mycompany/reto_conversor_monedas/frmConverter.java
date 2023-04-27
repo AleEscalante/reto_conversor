@@ -452,7 +452,7 @@ public class frmConverter extends javax.swing.JFrame {
         }
 
         if (option == "Temperatura") {
-            conversion = calculateConversion(key, Double.parseDouble(value));
+            conversion = Math.round(calculateConversion(key, Double.parseDouble(value)) * 100.0) / 100.0;
         } else {
             conversion = Math.round((Double.valueOf(value) * conversionFactorsMap.get(key)) * 100.0) / 100.0;
         }
